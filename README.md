@@ -56,8 +56,8 @@ memory: 256
 # Python Interpreter version. Allowed values: "3.10", "3.11", "3.12", "3.13"
 interpreter: "3.11"
 # Execution time limit (in minutes).
-#Allowed values range from 5 minutes to 180 minutes, in 1-minute increments.
-#Must be an integer.
+# Allowed values range from 5 minutes to 180 minutes, in 1-minute increments.
+# Must be an integer.
 time_limit: 5
 # Concurrency limit (1 to 128)
 concurrency: 32
