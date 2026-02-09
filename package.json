@@ -1,0 +1,10 @@
+{
+  "name": "ci-cd-test",
+  "version": "1.0.0",
+  "description": "CI CD Test Action",
+  "main": "pipe/pipe.js",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
+

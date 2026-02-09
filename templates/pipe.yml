@@ -1,0 +1,16 @@
+spec:
+  inputs:
+    stage:
+      default: test
+---
+component-job:
+  image: node:18
+  script:
+    - echo "Downloading script from component project..."
+    - node --version
+    # Install required dependencies
+    - npm install js-yaml
+    # Download the script from the component project (components3682052/test)
+    - curl "https://gitlab.com/api/v4/projects/components3682052%2Ftest/repository/files/pipe%2Fpipe.js/raw?ref=main" -o pipe.js
+    - node pipe.js
+  stage: $[[ inputs.stage ]]

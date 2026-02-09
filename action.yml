@@ -1,0 +1,27 @@
+name: "Superannotate Custom Action Deployment"
+description: "A Github Action that automatically updates or creates custom actions in SuperAnnotate directly from your GitHub repo."
+inputs:
+  sa_token:
+    description: "SuperAnnotate access token"
+    required: true
+
+  sa_url:
+    description: "SuperAnnotate URL"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        npm install
+    - name: Run action
+      shell: bash
+      env:
+        SA_TOKEN: ${{ inputs.sa_token }}
+        SA_URL: ${{ inputs.sa_url }}
+        NODE_PATH: ${{ github.action_path }}/node_modules
+      run: |
+        node ${{ github.action_path }}/pipe/pipe.js
