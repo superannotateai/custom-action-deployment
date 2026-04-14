@@ -9,19 +9,18 @@ const http = require("http");
 const SA_URL = process.env.SA_URL || "https://zimmer.superannotate.com";
 const SA_API_URL = `${SA_URL}/api/v1.1/custom_task`;
 const SA_TOKEN = process.env?.SA_TOKEN || null;
-const VERSION = "0.0.1";
-const ghRange = getGitRangeFromGithubEvent();
+const VERSION = "0.0.2";
 
 // GitLab CI variables take precedence
 const GIT_BEFORE =
-  process.env.GIT_BEFORE ||
   process.env.CI_COMMIT_BEFORE_SHA ||
+  process.env.GIT_BEFORE ||
   ghRange?.before ||
   null;
 
 const GIT_AFTER =
-  process.env.GIT_AFTER ||
   process.env.CI_COMMIT_SHA ||
+  process.env.GIT_AFTER ||
   ghRange?.after ||
   process.env.GITHUB_SHA ||
   "HEAD";
@@ -51,32 +50,6 @@ function ensureCommitExists(sha) {
         return false;
       }
     }
-  }
-}
-
-function getGitRangeFromGithubEvent() {
-  try {
-    const eventPath = process.env.GITHUB_EVENT_PATH;
-    if (!eventPath || !fs.existsSync(eventPath)) return null;
-
-    const evt = JSON.parse(fs.readFileSync(eventPath, "utf-8"));
-
-    // push event
-    if (evt.before && evt.after) {
-      return { before: evt.before, after: evt.after };
-    }
-
-    // pull_request event
-    if (evt.pull_request?.base?.sha && evt.pull_request?.head?.sha) {
-      return {
-        before: evt.pull_request.base.sha,
-        after: evt.pull_request.head.sha,
-      };
-    }
-
-    return null;
-  } catch {
-    return null;
   }
 }
 
@@ -350,12 +323,18 @@ function makeRequest(url, options, data) {
     const isHttps = urlObj.protocol === "https:";
     const httpModule = isHttps ? https : http;
 
+    const bodyString = data ? JSON.stringify(data) : "";
     const requestOptions = {
       hostname: urlObj.hostname,
       port: urlObj.port || (isHttps ? 443 : 80),
       path: urlObj.pathname + urlObj.search,
       method: options.method || "GET",
-      headers: options.headers || {},
+      headers: {
+        ...options.headers,
+        ...(bodyString && {
+          "Content-Length": Buffer.byteLength(bodyString, "utf8"),
+        }),
+      },
     };
     const req = httpModule.request(requestOptions, (res) => {
       let body = "";
@@ -376,8 +355,8 @@ function makeRequest(url, options, data) {
       reject(error);
     });
 
-    if (data) {
-      req.write(JSON.stringify(data));
+    if (bodyString) {
+      req.write(bodyString, "utf8");
     }
 
     req.end();
