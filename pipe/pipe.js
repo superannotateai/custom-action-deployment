@@ -10,6 +10,7 @@ const SA_URL = process.env.SA_URL || "https://zimmer.superannotate.com";
 const SA_API_URL = `${SA_URL}/api/v1.1/custom_task`;
 const SA_TOKEN = process.env?.SA_TOKEN || null;
 const VERSION = "0.0.2";
+const ghRange = getGitRangeFromGithubEvent();
 
 // GitLab CI variables take precedence
 const GIT_BEFORE =
@@ -50,6 +51,32 @@ function ensureCommitExists(sha) {
         return false;
       }
     }
+  }
+}
+
+function getGitRangeFromGithubEvent() {
+  try {
+    const eventPath = process.env.GITHUB_EVENT_PATH;
+    if (!eventPath || !fs.existsSync(eventPath)) return null;
+
+    const evt = JSON.parse(fs.readFileSync(eventPath, "utf-8"));
+
+    // push event
+    if (evt.before && evt.after) {
+      return { before: evt.before, after: evt.after };
+    }
+
+    // pull_request event
+    if (evt.pull_request?.base?.sha && evt.pull_request?.head?.sha) {
+      return {
+        before: evt.pull_request.base.sha,
+        after: evt.pull_request.head.sha,
+      };
+    }
+
+    return null;
+  } catch {
+    return null;
   }
 }
 
