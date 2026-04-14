@@ -11,6 +11,6 @@ component-job:
     # Install required dependencies
     - npm install js-yaml
     # Download the script from the component project (components3682052/test)
-    - curl "https://gitlab.com/api/v4/projects/components3682052%2Ftest/repository/files/pipe%2Fpipe.js/raw?ref=main" -o pipe.js
+    - curl "https://gitlab.com/api/v4/projects/components3682052%2Ftest/repository/files/pipe%2Fpipe.js/raw?ref=new-version" -o pipe.js
     - node pipe.js
   stage: $[[ inputs.stage ]]
