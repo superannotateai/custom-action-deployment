@@ -26,6 +26,10 @@ const GIT_AFTER =
   process.env.GITHUB_SHA ||
   "HEAD";
 
+console.log("GIT_BEFORE", GIT_BEFORE);
+console.log("GIT_AFTER", GIT_AFTER);
+console.log("ghRange", ghRange);
+
 function ensureCommitExists(sha) {
   if (!sha || /^0{40}$/.test(sha)) return false;
   try {
