@@ -155,7 +155,7 @@ function isSdkToken(token) {
 }
 
 function getAuthHeaders(apiToken) {
-  console.log(isSdkToken(apiToken, 333333333333333));
+  console.log(apiToken, 33333333333);
   if (isSdkToken(apiToken)) {
     return {
       Authorization: apiToken,
