@@ -26,10 +26,6 @@ const GIT_AFTER =
   process.env.GITHUB_SHA ||
   "HEAD";
 
-console.log("GIT_BEFORE", GIT_BEFORE);
-console.log("GIT_AFTER", GIT_AFTER);
-console.log("ghRange", ghRange);
-
 function ensureCommitExists(sha) {
   if (!sha || /^0{40}$/.test(sha)) return false;
   try {
@@ -146,25 +142,6 @@ function sanitizeToken(token) {
   cleanToken = cleanToken.replace(/\s+/g, "");
 
   return cleanToken;
-}
-
-const TOKEN_PATTERN = /^[-.@_A-Za-z0-9]+=\d+$/;
-
-function isSdkToken(token) {
-  return TOKEN_PATTERN.test(token);
-}
-
-function getAuthHeaders(apiToken) {
-  console.log(apiToken, 33333333333);
-  if (isSdkToken(apiToken)) {
-    return {
-      Authorization: apiToken,
-      "Auth-Type": "sdk",
-    };
-  }
-  return {
-    "x-api-key": apiToken,
-  };
 }
 
 /**
@@ -419,13 +396,14 @@ function makeRequest(url, options, data) {
 async function checkTaskExists(name, apiToken) {
   const url = new URL(SA_API_URL);
   url.searchParams.append("name", name);
-  console.log(getAuthHeaders(apiToken), 8888888888);
 
   try {
     const response = await makeRequest(url.toString(), {
       method: "GET",
       headers: {
-        ...getAuthHeaders(apiToken),
+        "x-api-key": apiToken,
+        // Authorization: apiToken,
+        // "Auth-Type": "sdk",
         Referer: "https://app.superannotate.com/",
         "Content-Type": "application/json",
         "User-Agent": `Github Pipeline: ${VERSION}`,
@@ -435,11 +413,7 @@ async function checkTaskExists(name, apiToken) {
     const id = response.data?.results?.[0]?.id || response.data?.id || null;
     return id;
   } catch (error) {
-    console.log(
-      error,
-      999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,
-    );
-    console.error(`Error checking task existence: ${error.message}`);
+    console.error("Error checking task existence:", error.message);
     return null;
   }
 }
@@ -502,7 +476,9 @@ async function syncTask(folder, apiToken) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...getAuthHeaders(apiToken),
+            "x-api-key": apiToken,
+            // Authorization: apiToken,
+            // "Auth-Type": "sdk",
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -546,7 +522,9 @@ async function syncTask(folder, apiToken) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            ...getAuthHeaders(apiToken),
+            "x-api-key": apiToken,
+            // Authorization: apiToken,
+            // "Auth-Type": "sdk",
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -601,8 +579,6 @@ if (require.main === module) {
 
 module.exports = {
   sanitizeToken,
-  isSdkToken,
-  getAuthHeaders,
   getChangedFilesInFolder,
   getChangedFolders,
   generatePayload,
