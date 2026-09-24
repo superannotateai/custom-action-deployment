@@ -144,6 +144,24 @@ function sanitizeToken(token) {
   return cleanToken;
 }
 
+const TOKEN_PATTERN = /^[-.@_A-Za-z0-9]+=\d+$/;
+
+function isSdkToken(token) {
+  return TOKEN_PATTERN.test(token);
+}
+
+function getAuthHeaders(apiToken) {
+  if (isSdkToken(apiToken)) {
+    return {
+      Authorization: apiToken,
+      "Auth-Type": "sdk",
+    };
+  }
+  return {
+    "x-api-key": apiToken,
+  };
+}
+
 /**
  * Get changed files in a specific folder
  */
@@ -401,9 +419,7 @@ async function checkTaskExists(name, apiToken) {
     const response = await makeRequest(url.toString(), {
       method: "GET",
       headers: {
-        "x-api-key": apiToken,
-        // Authorization: apiToken,
-        // "Auth-Type": "sdk",
+        ...getAuthHeaders(apiToken),
         Referer: "https://app.superannotate.com/",
         "Content-Type": "application/json",
         "User-Agent": `Github Pipeline: ${VERSION}`,
@@ -476,9 +492,7 @@ async function syncTask(folder, apiToken) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": apiToken,
-            // Authorization: apiToken,
-            // "Auth-Type": "sdk",
+            ...getAuthHeaders(apiToken),
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -522,9 +536,7 @@ async function syncTask(folder, apiToken) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": apiToken,
-            // Authorization: apiToken,
-            // "Auth-Type": "sdk",
+            ...getAuthHeaders(apiToken),
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -579,6 +591,8 @@ if (require.main === module) {
 
 module.exports = {
   sanitizeToken,
+  isSdkToken,
+  getAuthHeaders,
   getChangedFilesInFolder,
   getChangedFolders,
   generatePayload,
