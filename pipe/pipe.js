@@ -413,6 +413,7 @@ async function checkTaskExists(name, apiToken) {
     const id = response.data?.results?.[0]?.id || response.data?.id || null;
     return id;
   } catch (error) {
+    console.log(error, 33333333333);
     console.error("Error checking task existence:", error.message);
     return null;
   }
