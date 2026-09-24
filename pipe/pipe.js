@@ -26,10 +26,6 @@ const GIT_AFTER =
   process.env.GITHUB_SHA ||
   "HEAD";
 
-console.log("GIT_BEFORE", GIT_BEFORE);
-console.log("GIT_AFTER", GIT_AFTER);
-console.log("ghRange", ghRange);
-
 function ensureCommitExists(sha) {
   if (!sha || /^0{40}$/.test(sha)) return false;
   try {
@@ -146,25 +142,6 @@ function sanitizeToken(token) {
   cleanToken = cleanToken.replace(/\s+/g, "");
 
   return cleanToken;
-}
-
-const TOKEN_PATTERN = /^[-.@_A-Za-z0-9]+=\d+$/;
-
-function isSdkToken(token) {
-  return TOKEN_PATTERN.test(token);
-}
-
-function getAuthHeaders(apiToken) {
-  console.log(isSdkToken(apiToken, 333333333333333));
-  if (isSdkToken(apiToken)) {
-    return {
-      Authorization: apiToken,
-      "Auth-Type": "sdk",
-    };
-  }
-  return {
-    "x-api-key": apiToken,
-  };
 }
 
 /**
@@ -424,7 +401,9 @@ async function checkTaskExists(name, apiToken) {
     const response = await makeRequest(url.toString(), {
       method: "GET",
       headers: {
-        ...getAuthHeaders(apiToken),
+        "x-api-key": apiToken,
+        // Authorization: apiToken,
+        // "Auth-Type": "sdk",
         Referer: "https://app.superannotate.com/",
         "Content-Type": "application/json",
         "User-Agent": `Github Pipeline: ${VERSION}`,
@@ -497,7 +476,9 @@ async function syncTask(folder, apiToken) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...getAuthHeaders(apiToken),
+            "x-api-key": apiToken,
+            // Authorization: apiToken,
+            // "Auth-Type": "sdk",
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -541,7 +522,9 @@ async function syncTask(folder, apiToken) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            ...getAuthHeaders(apiToken),
+            "x-api-key": apiToken,
+            // Authorization: apiToken,
+            // "Auth-Type": "sdk",
             Referer: "https://app.superannotate.com/",
             "User-Agent": `Github Pipeline: ${VERSION}`,
           },
@@ -596,8 +579,6 @@ if (require.main === module) {
 
 module.exports = {
   sanitizeToken,
-  isSdkToken,
-  getAuthHeaders,
   getChangedFilesInFolder,
   getChangedFolders,
   generatePayload,
