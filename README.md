@@ -9,7 +9,7 @@ Add the following snippet to the script section of your `.github/workflows/deplo
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: superannotateai/custom-action-deployment@{latest version i.e. 0.0.1)
+  - uses: superannotateai/custom-action-deployment@{latest version i.e. 0.0.2)
 with:
 sa_token: ${{  secrets.SA_TOKEN  }} # Required. SuperAnnotate api key
 ```
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build and Deploy
-        uses: superannotateai/custom-action-deployment@0.0.1
+        uses: superannotateai/custom-action-deployment@0.0.2
         with:
           sa_token: ${{ secrets.SA_TOKEN }}
 ```
