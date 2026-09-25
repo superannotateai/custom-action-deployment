@@ -11,14 +11,14 @@ steps:
   - uses: actions/checkout@v4
   - uses: superannotateai/custom-action-deployment@{latest version i.e. 0.0.1)
 with:
-sa_token: ${{  secrets.SA_TOKEN  }} # Required. SuperAnnotate authentication token
+sa_token: ${{  secrets.SA_TOKEN  }} # Required. SuperAnnotate api key
 ```
 
 ## Variables
 
-| Variable   | Type   | Required | Description                                                             |
-| ---------- | ------ | -------- | ----------------------------------------------------------------------- |
-| `SA_TOKEN` | String | Yes      | This is your team's SuperAnnotate SDK token. Add this as a repo secret. |
+| Variable   | Type   | Required | Description                                                                                 |
+| ---------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
+| `SA_TOKEN` | String | Yes      | This is your Team or Personal SuperAnnotate API key. Add your desired one as a repo secret. |
 
 ## Repo Structure
 

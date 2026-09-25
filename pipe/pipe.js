@@ -9,7 +9,7 @@ const http = require("http");
 const SA_URL = process.env.SA_URL || "https://zimmer.superannotate.com";
 const SA_API_URL = `${SA_URL}/api/v1.1/custom_task`;
 const SA_TOKEN = process.env?.SA_TOKEN || null;
-const VERSION = "0.0.2";
+const VERSION = "0.0.3";
 const ghRange = getGitRangeFromGithubEvent();
 
 // GitLab CI variables take precedence
